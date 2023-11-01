@@ -6,8 +6,10 @@ import pymorphy2
 class TextRedactor:
     @staticmethod
     def get_text(document_path: str) -> str:
+        current_path = str(Path(__file__).resolve().parent.parent).replace('sip', 'media\\')
+        current_path = current_path + document_path
         text = ""
-        with open(document_path, "r", encoding='UTF-8') as document:
+        with open(current_path, "r", encoding='UTF-8') as document:
             for line in document:
                 for term in line.lower().split():
                     for symbol in term:
