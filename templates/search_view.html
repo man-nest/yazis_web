@@ -19,7 +19,7 @@
                 {% for article  in results %}
                     <li class="list-group-item">
                         <a href="{% url 'document_page' article.slug %}">{{ article.title }}</a><br>
-                        <small class="text-muted">Найденные термины: {{ terms }}</small>
+                        <small class="text-muted">Найденные термины: {{ article.terms }}</small>
                     </li>
                 {% endfor %}
             </ul>

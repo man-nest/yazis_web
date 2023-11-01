@@ -10,6 +10,7 @@ class Document(models.Model):
     author = models.CharField(max_length=70, verbose_name='Автор')
     time_publish = models.DateTimeField(auto_now_add=True)
     cover = models.ImageField(upload_to="cover")
+    terms = None
 
     def __str__(self):
         return self.title

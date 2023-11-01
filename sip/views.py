@@ -7,21 +7,35 @@ from sip.some_content.Analyzer import Analyzer
 
 def main_page(request):
     query = request.GET.get('query')
-    terms = None
-    docs = []
+    documents = []
+    method = 2
     if not bool(Analyzer.documents):
         docs = Document.objects.all()
         Analyzer.some_init(docs)
 
     if query:
-        docs = []
-        docs_title, terms = Analyzer.analyze(query)
+        docs_title, terms = Analyzer.analyze(query, method)
+        number = 0
+
         for one in docs_title:
-            docs.append(Document.objects.filter(title=one).first())
+            obj = Document.objects.filter(title=one).first()
+            if method == 1:
+                obj.terms = terms
+                documents.append(obj)
+            else:
+                obj.terms = terms[number]
+                if len(documents) < 1:
+                    documents.append(obj)
+                elif documents[-1].terms[-1] < obj.terms[-1]:
+                    documents.clear()
+                    documents.append(obj)
+                number += 1
+
+        if method == 2:
+            documents[-1].terms[-1] = 'Общая оценка релевантности: ' + str(documents[-1].terms[-1])
 
     context = {
-        "results": docs,
-        'terms': terms,
+        "results": documents,
         'query': query
     }
 

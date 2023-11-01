@@ -22,16 +22,18 @@ class Analyzer:
     @staticmethod
     def analyze(query: str, method=1):
         user_request, query = Analyzer.calculate_query_vector(query)
+
+        dict_term_count = dict()
+        for term in query.split():
+            if term in dict_term_count:
+                dict_term_count[term] += 1
+            else:
+                dict_term_count[term] = 1
+
+        list_doc = []
+        keys = []
+
         if method == 1:
-            dict_term_count = dict()
-            for term in query.split():
-                if term in dict_term_count:
-                    dict_term_count[term] += 1
-                else:
-                    dict_term_count[term] = 1
-
-            list_doc = []
-
             for doc in Analyzer.documents:
                 query_vector = []
                 for term in doc.dict_term_count:
@@ -39,12 +41,20 @@ class Analyzer:
                         query_vector.append(1)
                 if len(query_vector) == len(dict_term_count):
                     list_doc.append(doc.title)
-        else:
-            return {}
 
-        keys = []
-        for key in dict_term_count.keys():
-            keys.append(key)
+            for key in dict_term_count.keys():
+                keys.append(key)
+        else:
+            for doc in Analyzer.documents:
+                query_vector = []
+                rating = 0
+                for term in doc.term_weight_dictionary:
+                    if term in dict_term_count:
+                        query_vector.append(term+': '+str(doc.term_weight_dictionary[term]))
+                        rating += doc.term_weight_dictionary[term]
+                query_vector.append(rating)
+                keys.append(query_vector)
+                list_doc.append(doc.title)
 
         return list_doc, keys
 
