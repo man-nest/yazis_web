@@ -1,0 +1,26 @@
+Electron-beam-induced carbon contamination is a detrimental side effect in almost all electron microscopy investigations.
+The growth of contamination is unwanted because it covers structures of interest, worsens the resolution, and may cause charging problems (Heide, 1963; Egerton, 2019).
+It also impedes analytical studies by energy-dispersive X-ray spectroscopy and electron energy loss spectroscopy that require high current densities. Contamination results
+from electron-beam-induced polymerization of carbon-rich organic molecules on the sample surface (mobile contaminants) that are present from sample preparation and storage or
+adsorption of molecules from the residual gas atmosphere in the microscope (Hillier, 1948; Heide, 1963; Egerton & Rossouw, 1976; Knox, 1976; Love et al., 1981; Reimer, 1998; Li & Joy, 2006).
+The contamination deposit is amorphous and carbonaceous but may contain other elements, like hydrogen, oxygen, or nitrogen (Hillier, 1948; Kumao et al., 1981; Reimer, 1998; Lau et al., 2010;
+Hettler et al., 2017). If a thin sample is irradiated by the electron beam, the deposit grows on both sides of the film (Hren, 1978).
+
+A distinction must be made between contamination induced by three types of illumination: Illumination by a defocused stationary electron beam denoted as transmission
+ electron microscopy (TEM)-like illumination in the following, illumination by a scanning focused beam denoted as scanning-(transmission)-electron-microscopy (S(T)EM)-like
+  illumination, and illumination by a stationary focused electron beam (spot illumination). Different contamination morphologies typically result from different illumination
+   strategies. For spot illumination, cones are formed (Conru & Laberge, 1975; Kanaya et al., 1990). Kanaya et al. and others described a transition from a cone to a circular frame-like
+    morphology with increasing contamination thickness at the boundary of the illuminated region for an increasing beam diameter, depending on the relation between the spot radius and
+     the diffusion coefficient (Hren, 1978; Kanaya et al., 1988). A large beam diameter frequently leads to circular, frame-like contamination patterns in TEM. For a focused scanning
+      beam as in S(T)EM, the shape of the deposit typically follows the dimensions of the scanned area (Hirsch et al., 1994; Roediger et al., 2009). Its thickness is often more homogeneous
+       than contamination from irradiating a region of the same size with a static beam, which was explained by the replenishment of hydrocarbons during the scan refresh time (Utke et al., 2008).
+        However, amplified contamination growth at the border of the scanned region is also observed (Hirsch et al., 1994; Vladár et al., 2001, 2008; Vladár & Postek, 2005; Griffiths & Walther,
+         2010; Lau et al., 2010; Wanzenboeck et al., 2010).
+
+Contamination research has been performed since the early studies of Stewart, Watson, and Ennos, and many other publications have
+ shed light on different factors of carbon contamination (Stewart, 1934; Watson, 1947; Ennos, 1953). However, only a smaller fraction
+  of the work is related to quantitative contamination studies. For example, Hirsch et al. (1994) have systematically evaluated contamination
+   growth in scanning electron microscopy (SEM) on bulk samples. They determined relative contamination thicknesses by recording backscattered
+    electron (BSE)-SEM images that were normalized with the BSE intensity of clean sample regions. Roediger et al. (2009) investigated the absolute
+     thickness of deposits produced by SEM irradiation on bulk Si by atomic force microscopy. Energy-filtered TEM was used for quantification of the
+     contamination thickness by Mitchell who tested contamination growth on carbon films and other specimens at 200 keV in the STEM mode (Mitchell, 2015).
