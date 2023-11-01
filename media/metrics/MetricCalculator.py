@@ -30,4 +30,3 @@ class MetricCalculator:
             return self.precision
         else:
             return 2 / (self.precision ** -1 + self.recall ** -1)
-

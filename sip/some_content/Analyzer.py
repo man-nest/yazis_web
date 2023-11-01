@@ -19,10 +19,27 @@ class Analyzer:
 
     @staticmethod
     def analyze(query: str):
-        query_vector = Analyzer.calculate_query_vector(query)
-        print(query_vector)
-        print(Analyzer.dictionary)
-        return {}
+        user_request, query = Analyzer.calculate_query_vector(query)
+
+        dict_term_count = dict()
+        for term in query.split():
+            if term in dict_term_count:
+                dict_term_count[term] += 1
+            else:
+                dict_term_count[term] = 1
+
+        list_doc = []
+
+        for doc in Analyzer.documents:
+            query_vector = []
+            for term in doc.dict_term_count:
+                print(term)
+                if term in dict_term_count:
+                    query_vector.append(1)
+            if len(query_vector) == len(dict_term_count):
+                list_doc.append(doc.path)
+
+        return list_doc
 
     @staticmethod
     def create_dictionary():
@@ -75,7 +92,7 @@ class Analyzer:
             else:
                 query_vector.append(0)
 
-        return tuple(query_vector)
+        return tuple(query_vector), query
 
     @staticmethod
     def clean_text(text: str) -> str:
