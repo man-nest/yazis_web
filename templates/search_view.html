@@ -1,20 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <h1>Поиск документов</h1>
+    <div class="container">
+        <h1>Поиск документов</h1>
 
-    <form action="{% url 'main_page' %}" method="get">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Введите запрос" name="query">
-            <div class="input-group-append">
-                <button class="btn btn-primary" type="submit">Искать</button>
+        <form action="{% url 'main_page' %}" method="get">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Введите запрос" name="query">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Искать</button>
+                </div>
             </div>
-        </div>
-    </form>
-    {% for i in results %}
-        <h6>{{i}}</h6>
-    {% endfor %}
-    <!-- Здесь вы можете отобразить результаты поиска, если они будут доступны -->
-</div>
+        </form>
+
+
+        {% if results %}
+            <ul class="list-group">
+                {% for article  in results %}
+                    <li class="list-group-item">
+                        <a href="{% url 'document_page' article.slug %}">{{ article.title }}</a><br>
+                        <small class="text-muted">Найденные термины: {{ terms }}</small>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Нет результатов поиска</p>
+        {% endif %}
+
+    </div>
 {% endblock %}

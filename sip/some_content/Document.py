@@ -1,18 +1,18 @@
 import math
 from functools import cached_property
 
+from sip.some_content.TextRedactor import TextRedactor
+
 
 class Document:
 
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str, title) -> None:
         self._path = path
-        self.text = self.get_text(path)
-        print(self.text, "-----------------------------------------------------", sep='\n')
+        self.title = title
+        self.text = TextRedactor.filter(TextRedactor.get_text(path))
         self._term_count = 0
         self.dict_term_count = self.create_dictionary()
-        print(self.dict_term_count)
         self.term_weight_dictionary = dict()
-        self.vector = list()
 
     def create_dictionary(self):
         dict_term_count = dict()
@@ -38,21 +38,6 @@ class Document:
 
     def calculate_term_weight(self, term: str, inverse_frequency: float) -> float:
         return self.dict_term_count[term] * inverse_frequency
-
-    @staticmethod
-    def get_text(document_path: str) -> str:
-        text = ""
-        with open(document_path, "r", encoding='UTF-8') as document:
-            for line in document:
-                for term in line.lower().split():
-                    for symbol in term:
-                        if symbol.isalpha():
-                            text += symbol
-
-                    if text[-1] != ' ':
-                        text += " "
-
-        return text.strip()
 
     def calculate_vector(self, dictionary: dict, document_count: int) -> tuple:
         vector = list()

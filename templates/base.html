@@ -4,21 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Информационно-поисковая система{% endblock %}</title>
-    <!-- Подключение Bootstrap CSS с CDN -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Дополнительные стили, если необходимо -->
-
-    <!-- Подключение Bootstrap JS с CDN и других скриптов, если необходимо -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- Дополнительные скрипты, если необходимо -->
-
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Информационно-поисковая система</a>
+    <a class="navbar-brand" href="{% url 'main_page' %}">Информационно-поисковая система</a>
 </nav>
 
 <div class="container">
