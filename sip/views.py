@@ -1,8 +1,9 @@
 from django.http import HttpResponseNotFound
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views import View
 
-from sip.models import *
-from sip.some_content.Analyzer import Analyzer
+from sip.some_content.Analyzer import Analyzer, TextRedactor
+from .forms import *
 
 
 def main_page(request):
@@ -36,7 +37,8 @@ def main_page(request):
 
     context = {
         "results": documents,
-        'query': query
+        'query': query,
+
     }
 
     return render(request, 'search_view.html', context)
@@ -46,10 +48,48 @@ def show_doc(request, article_slug):
     article = get_object_or_404(Document, slug=article_slug)
 
     context = {
-        'article': article
+        'article': article,
     }
 
     return render(request, 'document_page.html', context)
+
+
+class AddDocument(View):
+    template_name = 'add_document.html'
+
+    def get(self, request, **kwargs):
+        form = DocumentForm(initial={'title': None})
+
+        context = {
+            'form': form,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        form = DocumentForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            document = form.save(commit=False)
+            if document.title is None:
+                document.title = (str(document.file_path).replace('.txt', '')).replace('_', ' ')
+            document.slug = (document.title.lower()).replace(' ', '_')
+            path = 'documents\\' + str(document.file_path)
+            document.save()
+            document.text = TextRedactor.read_from_file(path)
+            document.save()
+            docs = Document.objects.all()
+            Analyzer.some_init(docs)
+            return redirect('main_page')  # Редирект после успешного сохранения
+
+        context = {
+            'form': form,
+        }
+
+        return render(request, self.template_name, context)
+
+
+def help_some(request):
+    return render(request, 'help.html')
 
 
 # Create your views here.

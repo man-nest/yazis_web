@@ -54,3 +54,15 @@ class TextRedactor:
                 new_text += morph.normal_forms(word)[0] + ' '
 
         return new_text.strip()
+
+    @staticmethod
+    def read_from_file(path):
+        current_path = str(Path(__file__).resolve().parent.parent).replace('sip', 'media\\')
+        current_path = current_path + path
+
+        text = ""
+        with open(current_path, "r", encoding='UTF-8') as document:
+            for line in document:
+                text += line
+
+        return line
