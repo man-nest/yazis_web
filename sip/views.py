@@ -1,9 +1,16 @@
+import os
+
 from django.http import HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 
 from sip.some_content.Analyzer import Analyzer, TextRedactor
 from .forms import *
+from .second_lab_content.AlphabetMethod import AlphabetMethod
+from .second_lab_content.GramMethod import GramsMethod
+from .second_lab_content.NeuralMethod import NeuralMethod
+
+dataset = ["sip/second_lab_content/dataset/english.html", "sip/second_lab_content/dataset/french.html"]
 
 
 def main_page(request):
@@ -86,6 +93,89 @@ class AddDocument(View):
         }
 
         return render(request, self.template_name, context)
+
+
+class CheckLanguage(View):
+    template_name = 'check_language.html'
+
+    def get(self, request, **kwargs):
+        context = {
+
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+
+        choice = request.POST.get('choice')
+        path = request.POST.get('path')
+        error = ''
+        answer = ''
+
+        if 'save_button' in request.POST:
+            if len(dataset) == 3:
+                answer = CheckLanguage.save_results(dataset[2])
+                del dataset[2]
+            else:
+                error = 'Нечего сохранять'
+            context = {
+                'error_message': error,
+                'answer': answer
+            }
+            return render(request, self.template_name, context)
+        elif choice is None:
+            error = 'Не выбран метод'
+        elif path == '':
+            error = 'Не введён путь к файлу'
+        else:
+            match choice:
+                case '1':
+                    method = GramsMethod(dataset[0], dataset[1])
+                case '2':
+                    method = AlphabetMethod(dataset[0], dataset[1])
+                case '3':
+                    method = NeuralMethod(dataset[0], dataset[1])
+                case _:
+                    method = None
+            answer = CheckLanguage.analyze(method.get_language, path)
+
+        context = {
+            'error_message': error,
+            'answer': answer
+        }
+
+        return render(request, self.template_name, context)
+
+    @staticmethod
+    def analyze(method, path):
+        abs_path = os.path.abspath(path)
+        import pathlib
+        uri = pathlib.Path(abs_path).as_uri()
+        import time
+        start_time = time.time()
+        content = uri + ' -- ' + method(path)
+        answer_string = (content + " ( %s seconds )" % (time.time() - start_time))
+        if len(dataset) == 3:
+            dataset[2] = content
+        else:
+            dataset.append(content)
+        return answer_string
+
+    @staticmethod
+    def save_results(content):
+        answer = ''
+        from datetime import date
+        today = date.today()
+        path = 'sip/second_lab_content/out/' + str(today) + ".txt"
+
+        with open(path, 'w', encoding='utf-8') as file:
+            file.write(content)
+
+        abs_path = os.path.abspath(path)
+        import pathlib
+        uri = pathlib.Path(abs_path).as_uri()
+        answer = 'Saved -- ' + str(uri)
+
+        return answer
 
 
 def help_some(request):
