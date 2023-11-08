@@ -3,6 +3,9 @@ import math
 from sip.some_content.Document import Document
 from sip.some_content.TextRedactor import TextRedactor
 
+from .getSynonyms import getSynonymsForList
+from .textPreprocessing import textPreprocessing
+
 
 class Analyzer:
     documents = list()
@@ -22,13 +25,18 @@ class Analyzer:
     @staticmethod
     def analyze(query: str, method=1):
         user_request, query = Analyzer.calculate_query_vector(query)
+        query = textPreprocessing(query)
 
-        dict_term_count = dict()
-        for term in query.split():
-            if term in dict_term_count:
-                dict_term_count[term] += 1
-            else:
-                dict_term_count[term] = 1
+        query_synonyms = getSynonymsForList(query)
+
+        dict_term_count = dict()        
+        for synonyms_list in query_synonyms:
+            for synonym in synonyms_list:
+        
+                if synonym in dict_term_count:
+                    dict_term_count[synonym] += 1
+                else:
+                    dict_term_count[synonym] = 1
 
         list_doc = []
         keys = []
@@ -99,13 +107,16 @@ class Analyzer:
     @staticmethod
     def calculate_query_vector(query: str) -> tuple:
         query = TextRedactor.filter(TextRedactor.clean_text(query))
-
+        query_synonyms = getSynonymsForList(query.split())
+        
         query_vector = list()
-
         for term in Analyzer.dictionary:
-            if term in query:
-                query_vector.append(1)
-            else:
-                query_vector.append(0)
+            
+            for synonyms_list in query_synonyms:
+
+                if term in synonyms_list:
+                    query_vector.append(1)
+                else:
+                    query_vector.append(0)
 
         return tuple(query_vector), query

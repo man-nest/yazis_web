@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import pymorphy2
+import pymorphy3
 
 
 class TextRedactor:
@@ -46,7 +46,7 @@ class TextRedactor:
 
         words = list(text.split())
 
-        morph = pymorphy2.MorphAnalyzer(lang='ru')
+        morph = pymorphy3.MorphAnalyzer(lang='ru')
 
         new_text = ''
         for word in words:

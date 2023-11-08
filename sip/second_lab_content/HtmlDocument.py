@@ -1,7 +1,7 @@
 import codecs
 import os
 
-import pymorphy2
+import pymorphy3
 
 
 class HtmlDocument:
@@ -42,7 +42,7 @@ class HtmlDocument:
 
     @staticmethod
     def normalize(text: str) -> str:
-        morph = pymorphy2.MorphAnalyzer(lang='ru')
+        morph = pymorphy3.MorphAnalyzer(lang='ru')
 
         new_text = ''
         for word in list(text.split()):

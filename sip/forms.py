@@ -12,16 +12,15 @@ class DocumentForm(forms.ModelForm):
         fields = ['title', 'some_info', 'author', 'file_path', 'cover']
         widgets = {
             'title': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': 'Название документа', 'style': 'width: 250px;'}),
+                attrs={'class': 'form-control', 'placeholder': 'Название документа'}),
             'some_info': forms.Textarea(
-                attrs={'class': 'form-control', 'cols': 60, 'rows': 10, 'placeholder': 'О документе',
-                       'style': 'width: 350px;'}),
+                attrs={'class': 'form-control', 'cols': 60, 'rows': 10, 'placeholder': 'О документе'}),
             'author': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': 'Автор', 'style': 'width: 250px;'}),
+                attrs={'class': 'form-control', 'placeholder': 'Автор'}),
             'file_path': forms.ClearableFileInput(
-                attrs={'class': 'form-control-file', 'placeholder': 'ТxТ файл', 'style': 'width: 260px;'}),
+                attrs={'class': 'form-control', 'placeholder': 'ТxТ файл'}),
             'cover': forms.ClearableFileInput(
-                attrs={'class': 'form-control-file', 'placeholder': 'Фото статьи ', 'style': 'width: 260px;'}),
+                attrs={'class': 'form-control', 'placeholder': 'Фото статьи '}),
 
         }
         labels = {

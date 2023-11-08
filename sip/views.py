@@ -1,4 +1,5 @@
 import os
+import nltk
 
 from django.http import HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
@@ -14,6 +15,9 @@ dataset = ["sip/second_lab_content/dataset/english.html", "sip/second_lab_conten
 
 
 def main_page(request):
+    
+    nltk.download('all')
+
     query = request.GET.get('query')
     documents = []
     method = 2
