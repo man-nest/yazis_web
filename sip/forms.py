@@ -14,7 +14,7 @@ class DocumentForm(forms.ModelForm):
             'title': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': 'Название документа'}),
             'some_info': forms.Textarea(
-                attrs={'class': 'form-control', 'cols': 60, 'rows': 10, 'placeholder': 'О документе'}),
+                attrs={'class': 'form-control', 'cols': 60, 'rows': 5, 'placeholder': 'О документе'}),
             'author': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': 'Автор'}),
             'file_path': forms.ClearableFileInput(
@@ -29,4 +29,22 @@ class DocumentForm(forms.ModelForm):
             'author': 'Автор',
             'file_path': 'ТxТ файл',
             'cover': 'Фото статьи ',
+        }
+
+
+class DocumentURLForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = Document
+        fields = ['url']
+        widgets = {
+            'url': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'URL'}
+            )
+        }
+        
+        labels = {
+            'url': 'Добавить содержимое сайта по ссылке',
         }

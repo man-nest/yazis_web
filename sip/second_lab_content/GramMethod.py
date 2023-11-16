@@ -20,6 +20,9 @@ class GramsMethod:
 
     def get_language(self, file_path: str):
         grams = GramCreator(file_path).sorted_grams
+        
+        print(self.english_grams)
+        print(self.french_grams)
 
         english_measure = self.get_measure(grams, self.english_grams)
         french_measure = self.get_measure(grams, self.french_grams)

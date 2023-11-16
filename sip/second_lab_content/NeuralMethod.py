@@ -8,10 +8,12 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 import pandas as pd
 import numpy as np
+import tensorflow as tf
+
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import LabelEncoder
-from keras.models import Sequential
-from keras.layers import Dense
+from keras.utils import to_categorical
+
 
 from sip.second_lab_content.HtmlDocument import HtmlDocument
 
@@ -32,7 +34,7 @@ class NeuralMethod:
 
         for l in lang:
             lang_trim = self.data[self.data['lang'] == l].sample(500, random_state=100)
-            data_trim = data_trim.append(lang_trim)
+            data_trim = pd.concat([data_trim, lang_trim])
 
         # Create a random train, valid, test split
         data_shuffle = data_trim.sample(frac=1)
@@ -65,7 +67,7 @@ class NeuralMethod:
             analyzer='char', ngram_range=(3, 3), vocabulary=vocab)
         X = self.vectorizer.fit_transform(corpus)
 
-        self.names = self.vectorizer.get_feature_names()
+        self.names = self.vectorizer.get_feature_names_out()
         train_feat = pd.DataFrame(data=X.toarray(), columns=self.names)
 
         # Scale feature matrix
@@ -86,13 +88,13 @@ class NeuralMethod:
         y = self.encode(train_feat['lang'], self.encoder)
 
         # Define model
-        model = Sequential()
+        model = tf.keras.Sequential()
         self.model = model
         dim = int(x.size / len(x))
-        self.model.add(Dense(100, input_dim=dim, activation='relu'))
-        self.model.add(Dense(100, activation='relu'))
-        self.model.add(Dense(50, activation='relu'))
-        self.model.add(Dense(2, activation='softmax'))
+        self.model.add(tf.keras.layers.Dense(100, input_dim=dim, activation='relu'))
+        self.model.add(tf.keras.layers.Dense(100, activation='relu'))
+        self.model.add(tf.keras.layers.Dense(50, activation='relu'))
+        self.model.add(tf.keras.layers.Dense(2, activation='softmax'))
         self.model.compile(loss='categorical_crossentropy',
                            optimizer='adam', metrics=['accuracy'])
 
@@ -115,7 +117,7 @@ class NeuralMethod:
         self.X = vectorizer.fit_transform(corpus)
 
         # Get model feature names
-        feature_names = vectorizer.get_feature_names()
+        feature_names = vectorizer.get_feature_names_out()
 
         return feature_names
 
@@ -126,9 +128,9 @@ class NeuralMethod:
         ---------
             y: list of language labels
         """
-        from keras.utils import np_utils
+
         y_encoded = encoder.transform(y)
-        y_dummy = np_utils.to_categorical(y_encoded)
+        y_dummy = to_categorical(y_encoded)
 
         return y_dummy
 

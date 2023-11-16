@@ -1,7 +1,7 @@
 import math
 
-from sip.some_content.Document import Document
-from sip.some_content.TextRedactor import TextRedactor
+from .Document import Document
+from .TextRedactor import TextRedactor
 
 from .getSynonyms import getSynonymsForList
 from .textPreprocessing import textPreprocessing
@@ -24,24 +24,27 @@ class Analyzer:
 
     @staticmethod
     def analyze(query: str, method=1):
+        query_two=TextRedactor.filter(TextRedactor.clean_text(query))
         user_request, query = Analyzer.calculate_query_vector(query)
+        
         query = textPreprocessing(query)
 
         query_synonyms = getSynonymsForList(query)
 
         dict_term_count = dict()        
-        for synonyms_list in query_synonyms:
-            for synonym in synonyms_list:
-        
-                if synonym in dict_term_count:
-                    dict_term_count[synonym] += 1
-                else:
-                    dict_term_count[synonym] = 1
+       
 
         list_doc = []
         keys = []
 
         if method == 1:
+            
+            for term in query_two.split():
+                if term in dict_term_count:
+                    dict_term_count[term] += 1
+                else:
+                    dict_term_count[term] = 1
+            
             for doc in Analyzer.documents:
                 query_vector = []
                 for term in doc.dict_term_count:
@@ -53,17 +56,27 @@ class Analyzer:
             for key in dict_term_count.keys():
                 keys.append(key)
         else:
+            for synonyms_list in query_synonyms:
+                for synonym in synonyms_list:
+            
+                    if synonym in dict_term_count:
+                        dict_term_count[synonym] += 1
+                    else:
+                        dict_term_count[synonym] = 1
+                        
             for doc in Analyzer.documents:
                 query_vector = []
                 rating = 0
                 for term in doc.term_weight_dictionary:
                     if term in dict_term_count:
-                        query_vector.append(term+': '+str(doc.term_weight_dictionary[term]))
+                        query_vector.append(term + ': ' + str(doc.term_weight_dictionary[term]))
                         rating += doc.term_weight_dictionary[term]
                 query_vector.append(rating)
-                keys.append(query_vector)
-                list_doc.append(doc.title)
-
+                
+                if rating != 0:
+                    list_doc.append(doc.title)
+                    keys.append(query_vector)
+        
         return list_doc, keys
 
     @staticmethod

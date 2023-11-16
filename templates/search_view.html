@@ -5,6 +5,19 @@
         <h1>Поиск документов</h1>
 
         <form action="{% url 'main_page' %}" method="get">
+            <div class="form-group">
+                <label for="choice">Выберите вариант:</label>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" name="choice" value="1" id="choice1">
+                    <label class="form-check-label" for="choice1">Поиск по точному нахождению терминов в документах</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" name="choice" value="2" id="choice2" checked>
+                    <label class="form-check-label" for="choice2">Поиск с релевантностью</label>
+                </div>
+            </div>
+
+
             <div class="input-group mb-3">
                 <input type="text" class="form-control" placeholder="Введите запрос" name="query">
                 <div class="input-group-append">
@@ -12,7 +25,6 @@
                 </div>
             </div>
         </form>
-
 
         {% if results %}
             <ul class="list-group">

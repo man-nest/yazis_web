@@ -66,3 +66,11 @@ class TextRedactor:
                 text += line
 
         return line
+    
+    @staticmethod
+    def create_file(path, text):
+        current_path = str(Path(__file__).resolve().parent.parent).replace('sip', 'media\\')
+        current_path = current_path + path
+
+        with open(current_path, "w", encoding='UTF-8') as document:
+            document.write(text)

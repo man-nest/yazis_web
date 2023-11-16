@@ -28,7 +28,10 @@ def getSynonyms(word):
         for lemma in synset.lemmas():
             if lemma.name() not in synonyms:
                 synonyms.append(lemma.name())
-            
+    
+    if len(synonyms) == 0:
+        synonyms.append(word)
+        
     return synonyms
 
 

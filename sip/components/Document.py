@@ -1,7 +1,7 @@
 import math
 from functools import cached_property
 
-from sip.some_content.TextRedactor import TextRedactor
+from .TextRedactor import TextRedactor
 
 
 class Document:
