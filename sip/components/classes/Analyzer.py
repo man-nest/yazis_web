@@ -3,8 +3,8 @@ import math
 from .Document import Document
 from .TextRedactor import TextRedactor
 
-from .getSynonyms import getSynonymsForList
-from .textPreprocessing import textPreprocessing
+from ..getSynonyms import getSynonymsForList
+from ..textPreprocessing import textPreprocessing
 
 
 class Analyzer:
@@ -15,9 +15,8 @@ class Analyzer:
     @staticmethod
     def some_init(docs):
         for one_obj in docs:
-            path = one_obj.file_path
             title = one_obj.title
-            Analyzer.documents.append(Document(str(path), title))
+            Analyzer.documents.append(Document(title))
         Analyzer.dictionary = Analyzer.create_dictionary()
         Analyzer.dict_term_inverse_frequency = Analyzer.create_term_inverse_frequency_dictionary()
         Analyzer.create_term_weight_dictionaries()
@@ -25,7 +24,7 @@ class Analyzer:
     @staticmethod
     def analyze(query: str, method=1):
         query_two=TextRedactor.filter(TextRedactor.clean_text(query))
-        user_request, query = Analyzer.calculate_query_vector(query)
+        _, query = Analyzer.calculate_query_vector(query)
         
         query = textPreprocessing(query)
 
@@ -46,11 +45,11 @@ class Analyzer:
                     dict_term_count[term] = 1
             
             for doc in Analyzer.documents:
-                query_vector = []
+                count = 0
                 for term in doc.dict_term_count:
                     if term in dict_term_count:
-                        query_vector.append(1)
-                if len(query_vector) == len(dict_term_count):
+                        count += 1
+                if count == len(dict_term_count):
                     list_doc.append(doc.title)
 
             for key in dict_term_count.keys():

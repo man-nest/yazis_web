@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="content">
+        <form action="{% url 'metrics' %}" class="form-signin" style="text-align: center" method="post"
+              enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-error">{{ form.non_field_errors }}</div>
+            <h1 class="h3 mb-3 font-weight-normal">Metrics</h1>
+
+            <label class="form-label">Finded</label>
+            <div class="input-group mb-3">
+                <span class="input-group-text">Relevant, Not Relevant</span>
+                <input type="text" aria-label="a" placeholder="a" name="a" class="form-control">
+                <input type="text" aria-label="b" placeholder="b" name="b" class="form-control">
+            </div>
+
+            <label class="form-label">Not finded</label>
+            <div class="input-group mb-3">
+                <span class="input-group-text">Relevant, Not Relevant</span>
+                <input type="text" aria-label="c" placeholder="c" name="c" class="form-control">
+                <input type="text" aria-label="d" placeholder="d" name="d" class="form-control">
+            </div>
+
+            <button type="submit" name="Submit" class="btn btn-outline-success">Calculate</button>
+
+        </form>
+
+        {% if error %}
+            <br />
+            <div style="text-align: center">
+                {{ error }}
+            </div>
+        {% endif %}
+        
+        {% if metrics %}
+            <br />
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for key, value in metrics.items %}
+                    <tr>
+                        <td>{{ key }}</td>
+                        <td>{{ value }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+    </div>
+{% endblock %}

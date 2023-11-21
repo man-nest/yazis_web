@@ -1,4 +1,5 @@
 import math
+
 from functools import cached_property
 
 from .TextRedactor import TextRedactor
@@ -6,10 +7,9 @@ from .TextRedactor import TextRedactor
 
 class Document:
 
-    def __init__(self, path: str, title) -> None:
-        self._path = path
+    def __init__(self, title:str) -> None:
         self.title = title
-        self.text = TextRedactor.filter(TextRedactor.get_text(path))
+        self.text = TextRedactor.filter(TextRedactor.get_text(title))
         self._term_count = 0
         self.dict_term_count = self.create_dictionary()
         self.term_weight_dictionary = dict()
@@ -54,15 +54,15 @@ class Document:
 
         return tuple(vector)
 
-    @cached_property
-    def path(self) -> str:
-        return self._path
+    # @cached_property
+    # def path(self) -> str:
+    #     return self._path
 
     def get_info_about_word_in_the_document(self, word):
         count = 0
         if does_contains := self.contains_word(word):
             count = self.get_count_of_word(word)
-        return {'document': self.path, 'contains': does_contains, 'count': count}
+        return {'document': self.title, 'contains': does_contains, 'count': count}
 
     def contains_word(self, word: str) -> bool:
         return word in self.dict_term_count.keys()

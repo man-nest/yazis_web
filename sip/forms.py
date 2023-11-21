@@ -9,26 +9,23 @@ class DocumentForm(forms.ModelForm):
 
     class Meta:
         model = Document
-        fields = ['title', 'some_info', 'author', 'file_path', 'cover']
+        fields = ['title', 'description', 'author', 'cover']
         widgets = {
             'title': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': 'Название документа'}),
-            'some_info': forms.Textarea(
-                attrs={'class': 'form-control', 'cols': 60, 'rows': 5, 'placeholder': 'О документе'}),
+                attrs={'class': 'form-control', 'placeholder': 'Document name'}),
+            'description': forms.Textarea(
+                attrs={'class': 'form-control', 'cols': 60, 'rows': 5, 'placeholder': 'Document description'}),
             'author': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': 'Автор'}),
-            'file_path': forms.ClearableFileInput(
-                attrs={'class': 'form-control', 'placeholder': 'ТxТ файл'}),
+                attrs={'class': 'form-control', 'placeholder': 'Author'}),
             'cover': forms.ClearableFileInput(
-                attrs={'class': 'form-control', 'placeholder': 'Фото статьи '}),
+                attrs={'class': 'form-control', 'placeholder': 'Document image'}),
 
         }
         labels = {
-            'title': 'Название документа',
-            'some_info': 'О документе',
-            'author': 'Автор',
-            'file_path': 'ТxТ файл',
-            'cover': 'Фото статьи ',
+            'title': 'Document name',
+            'description': 'Document description',
+            'author': 'Author',
+            'cover': 'Document image',
         }
 
 

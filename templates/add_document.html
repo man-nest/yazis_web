@@ -6,13 +6,19 @@
             {% csrf_token %}
 
             <div class="form-error">{{ form.non_field_errors }}</div>
-            <h1 class="h3 mb-3 font-weight-normal">Добавление документа</h1>
+            <h1 class="h3 mb-3 font-weight-normal">Add document</h1>
 
             {% for f in form %}
                 <p><label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}:</label>{{ f }}</p>
                 <div class="form-error">{{ f.errors }}</div>
             {% endfor %}
-            <button type="submit" class="btn btn-success">Сохранить</button>
+
+            <div class="mb-3">
+                <label for="formFileMultiple" class="form-label">Choose files</label>
+                <input class="form-control" type="file" id="formFileMultiple" name="File" accept=".txt" required>
+            </div>
+
+            <button type="submit" class="btn btn-success">Add</button>
         </form>
     </div>
 {% endblock %}

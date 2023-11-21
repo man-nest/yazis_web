@@ -1,9 +1,9 @@
 class MetricCalculator:
-    def __init__(self):
-        self.a = 20
-        self.b = 1
-        self.c = 2
-        self.d = 10
+    def __init__(self, a:int = 20, b:int = 1, c:int = 2, d:int = 10):
+        self.a = a
+        self.b = b
+        self.c = c
+        self.d = d
 
         self.recall = self.calculateRecall()
         self.precision = self.calculatePrecision()

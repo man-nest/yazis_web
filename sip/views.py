@@ -1,19 +1,25 @@
 import os
 import nltk
+import pathlib
+import time
 
 from urllib.request import urlopen
+from datetime import date
 
 from django.http import HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
-
-from .components.Analyzer import Analyzer, TextRedactor
-from .components.textFromHTML import text_from_html
-
 from .forms import *
+
+from .components.classes.Analyzer import Analyzer, TextRedactor
+from .components.textFromHTML import text_from_html
+from .components.classes.MetricCalculator import MetricCalculator
+
 from .second_lab_content.AlphabetMethod import AlphabetMethod
 from .second_lab_content.GramMethod import GramsMethod
 from .second_lab_content.NeuralMethod import NeuralMethod
+
+from .components.classes.Essay import Essay
 
 dataset = ["sip/second_lab_content/dataset/english.html", "sip/second_lab_content/dataset/french.html"]
 
@@ -87,15 +93,18 @@ class AddDocument(View):
 
         if form.is_valid():
             document = form.save(commit=False)
+            
             if document.title is None:
                 document.title = (str(document.file_path).replace('.txt', '')).replace('_', ' ')
+            
             document.slug = (document.title.lower()).replace(' ', '_')
-            path = 'documents\\' + str(document.file_path)
+            
+            document.text = document.file_path.read().decode()
             document.save()
-            document.text = TextRedactor.read_from_file(path)
-            document.save()
+            
             docs = Document.objects.all()
             Analyzer.some_init(docs)
+
             return redirect('main_page')  # Редирект после успешного сохранения
 
         context = {
@@ -133,7 +142,6 @@ class AddDocumentURL(View):
                 file = 'documents\\' + str(title) + '.txt'
                 
                 document.file_path = file
-                TextRedactor.create_file(file, document.text)
                 
                 document.save()   
                 docs = Document.objects.all()
@@ -169,16 +177,20 @@ class CheckLanguage(View):
         answer = ''
 
         if 'save_button' in request.POST:
+            
             if len(dataset) == 3:
                 answer = CheckLanguage.save_results(dataset[2])
                 del dataset[2]
             else:
                 error = 'Нечего сохранять'
+                
             context = {
                 'error_message': error,
                 'answer': answer
             }
+            
             return render(request, self.template_name, context)
+        
         elif choice is None:
             error = 'Не выбран метод'
         elif path == '':
@@ -205,9 +217,9 @@ class CheckLanguage(View):
     @staticmethod
     def analyze(method, path):
         abs_path = os.path.abspath(path)
-        import pathlib
+
         uri = pathlib.Path(abs_path).as_uri()
-        import time
+
         start_time = time.time()
         content = uri + ' -- ' + method(path)
         answer_string = (content + " ( %s seconds )" % (time.time() - start_time))
@@ -220,7 +232,7 @@ class CheckLanguage(View):
     @staticmethod
     def save_results(content):
         answer = ''
-        from datetime import date
+        
         today = date.today()
         path = 'sip/second_lab_content/out/' + str(today) + ".txt"
 
@@ -228,12 +240,104 @@ class CheckLanguage(View):
             file.write(content)
 
         abs_path = os.path.abspath(path)
-        import pathlib
+
         uri = pathlib.Path(abs_path).as_uri()
         answer = 'Saved -- ' + str(uri)
 
         return answer
 
+
+def create_essay(request):
+    error = ''
+    essay = ''
+    keywords = ''
+    document = []
+    
+    method = request.POST.get('choice')
+    
+    if request.method == 'POST':
+        if "Submit" in request.POST:
+            
+            keywordsOutput = []
+            essayOutput = []
+            if "File" in request.FILES:
+                title = str(request.FILES['File'])
+                slug = (title.split('.', 1)[0].lower()).replace(' ', '_').replace('|', '')
+
+                file = request.FILES['File'].read()
+                text = file.decode()
+
+                essayObj = Essay(text)
+                if method == 'Sentence_extraction':
+                    essayOutput = essayObj.get_summary()
+                    
+                    for output in essayOutput:
+                        essay += output 
+                        
+                elif method == 'ML':
+                    essayOutput = essayObj.ml()
+                    
+                    for output in essayOutput:
+                        essay += str(output)
+                
+                if request.POST.get('keywords') == 'Keywords':
+                    keywordsOutput = essayObj.keywords()
+
+                    for output in keywordsOutput:
+                        keywords += str(output)
+
+                try:
+                    doc = Document(title=title, slug=slug, text=text, essay=essay, keywords=keywords)
+                    doc.save()
+                    
+                    doc = Document.objects.get(essay=essay)
+                    document.append(doc)
+                except:
+                    
+                    error = 'Document with that name already exists!'
+                    
+                    if keywords != '':
+                        doc = Document.objects.filter(title=title).update(keywords=keywords)
+                        error = 'Document with that name already exists, but keywords added!'
+                        
+    context = {
+        'document': document,
+        'error': error,
+    }
+
+    return render(request, 'create_essay.html', context)
+
+def metrics(request):
+    error = ''
+    metricsDict = {}
+    
+    if "Submit" in request.POST:        
+        try:
+            a = int(request.POST.get('a'))
+            b = int(request.POST.get('b'))
+            c = int(request.POST.get('c'))
+            d = int(request.POST.get('d'))
+            
+            
+            metric = MetricCalculator(a, b, c, d)
+            metricsDict = {
+                'Recall': metric.recall,
+                'Precision': metric.precision,
+                'Accuracy': metric.accuracy,
+                'Error': metric.error,
+                'F measure': metric.f_measure
+            }
+            
+            
+        except:
+            error = 'Enter only numbers'
+        
+    context = {
+        'metrics': metricsDict,
+        'error': error
+    }
+    
+    return render(request, 'metrics.html', context)
 
 def help_some(request):
     return render(request, 'help.html')

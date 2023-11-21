@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="content">
+        <form action="{% url 'create_essay' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="choice">Choose variant:</label>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" name="choice" value="Sentence_extraction" id="choice1" checked>
+                    <label class="form-check-label" for="choice1">Sentence_extraction</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" name="choice" value="ML" id="choice2">
+                    <label class="form-check-label" for="choice2">ML</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="Keywords" name="keywords" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                      Keywords
+                    </label>
+                  </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="formFileMultiple" class="form-label">Choose files</label>
+                <input class="form-control" type="file" id="formFileMultiple" name="File" accept=".txt" multiple>
+            </div>
+            <button type="submit" name="Submit" class="btn btn-success">Create</button>
+
+        </form>
+
+        {{error}}
+        
+        <br />
+
+        {% if document %}
+            <ul class="list-group">
+                {% for article  in document %}
+                    <li class="list-group-item">
+                        <a href="{% url 'document_page' article.slug %}">{{ article.title }}</a><br>
+                        <small class="text-muted">Essay: {{ article.essay }}</small>
+                        <small class="text-muted">Keywords: {{ article.keywords }}</small>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+    </div>
+{% endblock %}

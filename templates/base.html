@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Информационно-поисковая система{% endblock %}</title>
+    <title>{% block title %}Information retrieval system{% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
@@ -14,47 +14,52 @@
     
 </head>
 <body>
-{% comment %} <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-    <div class="container">
-        <a style="font-style: italic; color: pink" class="navbar-brand" href="{% url 'main_page' %}">Информационно-поисковая система</a>
-        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'add_document' %}">Добавление документа</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'check_language' %}">Распознавания языка текстового документа</a>
-                </li>
-                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'help' %}">Помощь</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav> {% endcomment %}
 
 <nav class="navbar navbar-expand-lg bg-dark border-bottom border-body" data-bs-theme="dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'main_page' %}">Информационно-поисковая система</a>
+        <a class="navbar-brand" href="{% url 'main_page' %}">Information retrieval system</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'main_page' %}">Поиск документа</a>
+                    <a class="nav-link" aria-current="page" href=""></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Search
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                        <li>
+                            <a class="dropdown-item" aria-current="page" href="{% url 'main_page' %}">Documents search</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" aria-current="page" href="{% url 'metrics' %}">Metrics</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Add document
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                        <li>
+                            <a class="dropdown-item" aria-current="page" href="{% url 'add_document' %}">Add document by file</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" aria-current="page" href="{% url 'add_document_url' %}">Add document by URL</a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'add_document' %}">Добавление документа</a>
+                    <a class="nav-link" href="{% url 'check_language' %}">Recognizing the language of a text document</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'add_document_url' %}">Добавление документа по ссылке</a>
+                    <a class="nav-link" href="{% url 'create_essay' %}">Create essay</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'check_language' %}">Распознавания языка текстового документа</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'help' %}">Помощь</a>
+                    <a class="nav-link" href="{% url 'help' %}">Help</a>
                 </li>
             </ul>
         </div>

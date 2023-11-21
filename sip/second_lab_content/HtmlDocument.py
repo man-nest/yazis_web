@@ -1,6 +1,4 @@
 import codecs
-import os
-
 import pymorphy3
 
 
