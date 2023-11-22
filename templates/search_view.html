@@ -2,18 +2,18 @@
 
 {% block content %}
     <div class="container">
-        <h1>Поиск документов</h1>
+        <h1>Documents search</h1>
 
         <form action="{% url 'main_page' %}" method="get">
             <div class="form-group">
                 <label for="choice">Choose variant:</label>
                 <div class="form-check">
                     <input type="radio" class="form-check-input" name="choice" value="1" id="choice1">
-                    <label class="form-check-label" for="choice1">Поиск по точному нахождению терминов в документах</label>
+                    <label class="form-check-label" for="choice1">Search to find exact terms in documents</label>
                 </div>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" name="choice" value="2" id="choice2">
-                    <label class="form-check-label" for="choice2">Поиск с релевантностью</label>
+                    <input type="radio" class="form-check-input" name="choice" value="2" id="choice2" checked>
+                    <label class="form-check-label" for="choice2">Search with relevance</label>
                 </div>
             </div>
 
@@ -28,15 +28,17 @@
 
         {% if results %}
             <ul class="list-group">
-                {% for article  in results %}
+                {% for article in results %}
                     <li class="list-group-item">
                         <a href="{% url 'document_page' article.slug %}">{{ article.title }}</a><br>
                         <small class="text-muted">Найденные термины: {{ article.terms }}</small>
                     </li>
                 {% endfor %}
             </ul>
-        {% else %}
-            <p>Нет результатов поиска</p>
+        {% endif %}
+
+        {% if isDocuments %}
+            <p>{{ isDocuments }}</p>
         {% endif %}
 
     </div>

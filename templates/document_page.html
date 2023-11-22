@@ -8,6 +8,17 @@
 
                 <img src="{{ article.cover.url }}" alt="{{ article.title }}" class="img-fluid">
 
+                {% if article.keywords %}
+                    <h5>Keywords:</h5>
+                    <p>{{ article.keywords }}</p>
+                {% endif %}
+
+                {% if article.essay %}
+                    <h5>Essay:</h5>
+                    <p>{{ article.essay }}</p>
+                {% endif %}
+
+                <h5>Text:</h5>
                 <p>{{ article.text }}</p>
 
             </div>

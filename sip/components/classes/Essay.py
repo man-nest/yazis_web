@@ -27,7 +27,7 @@ class Essay:
 
         sentences_chopped = sent_tokenize(s.lower())
 
-        stop_words = set(stopwords.words("spanish") + stopwords.words('english'))
+        stop_words = set(stopwords.words("italian") + stopwords.words('english'))
         punc = set(string.punctuation)
 
         filtered_words = []
@@ -88,8 +88,8 @@ class Essay:
 
     def ml(self):
 
-        if detect(self.input) == 'es':
-            parser = PlaintextParser.from_string(self.input, Tokenizer('spanish'))
+        if detect(self.input) == 'it':
+            parser = PlaintextParser.from_string(self.input, Tokenizer('italian'))
         elif detect(self.input) == 'en':
             parser = PlaintextParser.from_string(self.input, Tokenizer('english'))
 

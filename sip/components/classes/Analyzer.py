@@ -17,6 +17,7 @@ class Analyzer:
         for one_obj in docs:
             title = one_obj.title
             Analyzer.documents.append(Document(title))
+            
         Analyzer.dictionary = Analyzer.create_dictionary()
         Analyzer.dict_term_inverse_frequency = Analyzer.create_term_inverse_frequency_dictionary()
         Analyzer.create_term_weight_dictionaries()

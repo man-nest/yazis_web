@@ -34,7 +34,7 @@ def main_page(request):
     query = request.GET.get('query')
     method = int(request.GET.get('choice')) if request.GET.get('choice') != None else 1
     
-
+    isDocuments = ''
     documents = []
     if not bool(Analyzer.documents):
         docs = Document.objects.all()
@@ -59,9 +59,12 @@ def main_page(request):
                     number += 1
 
 
+        isDocuments = '' if bool(documents) else 'No search results'
+    
     context = {
         "results": documents,
         'query': query,
+        'isDocuments': isDocuments,
     }
 
     return render(request, 'search_view.html', context)
@@ -217,12 +220,13 @@ class CheckLanguage(View):
     @staticmethod
     def analyze(method, path):
         abs_path = os.path.abspath(path)
-
         uri = pathlib.Path(abs_path).as_uri()
 
         start_time = time.time()
         content = uri + ' -- ' + method(path)
+
         answer_string = (content + " ( %s seconds )" % (time.time() - start_time))
+
         if len(dataset) == 3:
             dataset[2] = content
         else:
@@ -255,9 +259,11 @@ def create_essay(request):
     
     method = request.POST.get('choice')
     
+    text = ''
     if request.method == 'POST':
         if "Submit" in request.POST:
             
+            title = ''
             keywordsOutput = []
             essayOutput = []
             if "File" in request.FILES:
@@ -266,40 +272,62 @@ def create_essay(request):
 
                 file = request.FILES['File'].read()
                 text = file.decode()
-
-                essayObj = Essay(text)
-                if method == 'Sentence_extraction':
-                    essayOutput = essayObj.get_summary()
-                    
-                    for output in essayOutput:
-                        essay += output 
-                        
-                elif method == 'ML':
-                    essayOutput = essayObj.ml()
-                    
-                    for output in essayOutput:
-                        essay += str(output)
+            else:
+                title = request.POST.get('Title')
                 
-                if request.POST.get('keywords') == 'Keywords':
-                    keywordsOutput = essayObj.keywords()
-
-                    for output in keywordsOutput:
-                        keywords += str(output)
-
                 try:
-                    doc = Document(title=title, slug=slug, text=text, essay=essay, keywords=keywords)
-                    doc.save()
-                    
-                    doc = Document.objects.get(essay=essay)
-                    document.append(doc)
+                    doc = Document.objects.get(title=title)
+                    text = doc.text
                 except:
+                    error = 'There is no such document'
+
+            essayObj = Essay(text)
+            if method == 'Sentence_extraction':
+                essayOutput = essayObj.get_summary()
                     
-                    error = 'Document with that name already exists!'
-                    
-                    if keywords != '':
-                        doc = Document.objects.filter(title=title).update(keywords=keywords)
-                        error = 'Document with that name already exists, but keywords added!'
+                for output in essayOutput:
+                    essay += output 
                         
+            elif method == 'ML':
+                essayOutput = essayObj.ml()
+                    
+                for output in essayOutput:
+                    essay += str(output)
+                
+            if request.POST.get('keywords') == 'Keywords':
+                keywordsOutput = essayObj.keywords()
+
+                for output in keywordsOutput:
+                    keywords += str(output)
+
+            try:
+                doc = Document(title=title, slug=slug, text=text, essay=essay, keywords=keywords)
+                doc.save()
+                        
+                doc = Document.objects.get(essay=essay)
+                document.append(doc)
+            except:
+                if Document.objects.filter(title=title).exists():
+                    doc = Document.objects.get(title=title)
+                    
+                    if doc.keywords != '':
+                        Document.objects.filter(title=title).update(essay=essay)
+                    else:
+                        Document.objects.filter(title=title).update(essay=essay, keywords=keywords)
+                    
+                    doc = Document.objects.get(title=title)
+                    document.append(doc)
+                    error = 'Document with that name already exists, but keywords/essay added!'
+                    
+        if 'Save' in request.POST:
+            title = request.POST.get('Save')
+            
+            doc = Document.objects.get(title=title)
+            
+            essaySave = f'Keywords:\n{doc.keywords}\n\nEssay:\n{doc.essay}'
+            
+            TextRedactor.save(title, essaySave)
+              
     context = {
         'document': document,
         'error': error,

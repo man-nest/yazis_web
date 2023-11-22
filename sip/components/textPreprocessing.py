@@ -7,6 +7,9 @@ def textPreprocessing(rawText):
     rawText = rawText.translate(str.maketrans('', '', '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'))  # remove punctuation
 
     rawText = word_tokenize(rawText)  # tokenize
+    
+    # rawText = [word for word in word_tokenize(rawText) if
+    #     not any(char.isdigit() for char in word)]  # remove tokens with numbers
 
     spell = SpellChecker()  # correct misspelled words
     rawText = [spell.correction(word) for word in rawText]

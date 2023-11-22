@@ -54,9 +54,6 @@ class Document:
 
         return tuple(vector)
 
-    # @cached_property
-    # def path(self) -> str:
-    #     return self._path
 
     def get_info_about_word_in_the_document(self, word):
         count = 0

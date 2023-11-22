@@ -43,5 +43,5 @@ class DocumentURLForm(forms.ModelForm):
         }
         
         labels = {
-            'url': 'Добавить содержимое сайта по ссылке',
+            'url': 'Add site text by link',
         }

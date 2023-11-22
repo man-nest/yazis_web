@@ -1,5 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
+
+    <style type="text/css">
+        .text {
+            display: block;
+            width: 1200px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    </style>
+
     <div class="content">
         <form action="{% url 'create_essay' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
@@ -22,6 +33,11 @@
             </div>
 
             <div class="mb-3">
+                <label for="docTitle" class="form-label">Input document title</label>
+                <input type="text" class="form-control" placeholder="Enter document title" name="Title">
+            </div>
+
+            <div class="mb-3">
                 <label for="formFileMultiple" class="form-label">Choose files</label>
                 <input class="form-control" type="file" id="formFileMultiple" name="File" accept=".txt" multiple>
             </div>
@@ -35,12 +51,16 @@
 
         {% if document %}
             <ul class="list-group">
-                {% for article  in document %}
-                    <li class="list-group-item">
-                        <a href="{% url 'document_page' article.slug %}">{{ article.title }}</a><br>
-                        <small class="text-muted">Essay: {{ article.essay }}</small>
-                        <small class="text-muted">Keywords: {{ article.keywords }}</small>
-                    </li>
+                {% for article in document %}
+                    <form action="{% url 'create_essay' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <li class="list-group-item">
+                            <a href="{% url 'document_page' article.slug %}">{{ article.title }}</a><br>
+                            <small class="text-muted text">Essay: {{ article.essay }}</small>
+                            <small class="text-muted text">Keywords: {{ article.keywords }}</small><br/>
+                            <button type="submit" class="btn btn-primary" name="Save" value="{{ article.title }}">Save</button>
+                        </li>
+                    </from>
                 {% endfor %}
             </ul>
         {% endif %}
