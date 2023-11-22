@@ -97,18 +97,22 @@ class AddDocument(View):
         if form.is_valid():
             document = form.save(commit=False)
             
-            if document.title is None:
-                document.title = (str(document.file_path).replace('.txt', '')).replace('_', ' ')
+            if "File" in request.FILES:
             
-            document.slug = (document.title.lower()).replace(' ', '_')
-            
-            document.text = document.file_path.read().decode()
-            document.save()
-            
-            docs = Document.objects.all()
-            Analyzer.some_init(docs)
+                if document.title is None:
+                    document.title = str(request.FILES['File'])
+                
+                document.slug = (document.title.split('.', 1)[0].lower()).translate(str.maketrans(' ', '_', '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'))
+                
+                file = request.FILES['File'].read()
+                
+                document.text = file.decode()
+                document.save()
+                
+                docs = Document.objects.all()
+                Analyzer.some_init(docs)
 
-            return redirect('main_page')  # Редирект после успешного сохранения
+                return redirect('main_page')  # Редирект после успешного сохранения
 
         context = {
             'form': form,
@@ -138,7 +142,7 @@ class AddDocumentURL(View):
             try:
                 html = urlopen(document.url)
                 document.title, document.text = text_from_html(html.read())
-                document.slug = (document.title.lower()).replace(' ', '_').replace('|', '')
+                document.slug = (document.title.lower()).translate(str.maketrans(' ', '_', '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'))
                 document.author = 'website'
                 
                 title = document.title.replace(' ', '_').replace('|', '')
@@ -268,7 +272,7 @@ def create_essay(request):
             essayOutput = []
             if "File" in request.FILES:
                 title = str(request.FILES['File'])
-                slug = (title.split('.', 1)[0].lower()).replace(' ', '_').replace('|', '')
+                slug = (title.split('.', 1)[0].lower()).translate(str.maketrans(' ', '_', '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'))
 
                 file = request.FILES['File'].read()
                 text = file.decode()
@@ -298,7 +302,7 @@ def create_essay(request):
                 keywordsOutput = essayObj.keywords()
 
                 for output in keywordsOutput:
-                    keywords += str(output)
+                    keywords += str(output[0])
 
             try:
                 doc = Document(title=title, slug=slug, text=text, essay=essay, keywords=keywords)
@@ -310,7 +314,7 @@ def create_essay(request):
                 if Document.objects.filter(title=title).exists():
                     doc = Document.objects.get(title=title)
                     
-                    if doc.keywords != '':
+                    if doc.keywords != None:
                         Document.objects.filter(title=title).update(essay=essay)
                     else:
                         Document.objects.filter(title=title).update(essay=essay, keywords=keywords)
