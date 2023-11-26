@@ -14,6 +14,7 @@ from .forms import *
 from .components.classes.Analyzer import Analyzer, TextRedactor
 from .components.textFromHTML import text_from_html
 from .components.classes.MetricCalculator import MetricCalculator
+from .components.speechRecognition import speechRecognition
 
 from .second_lab_content.AlphabetMethod import AlphabetMethod
 from .second_lab_content.GramMethod import GramsMethod
@@ -370,6 +371,15 @@ def metrics(request):
     }
     
     return render(request, 'metrics.html', context)
+
+def speech(request):
+    
+    if request.method == 'POST':
+        if "Record" in request.POST:
+            print('Start recording')
+            speechRecognition()
+    
+    return render(request, 'speech.html')
 
 def help_some(request):
     return render(request, 'help.html')

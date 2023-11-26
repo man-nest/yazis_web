@@ -14,7 +14,6 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import LabelEncoder
 from keras.utils import to_categorical
 
-
 from sip.second_lab_content.HtmlDocument import HtmlDocument
 
 
