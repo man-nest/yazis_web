@@ -10,7 +10,7 @@ urlpatterns = [
     path('add_document_url/', AddDocumentURL.as_view(), name='add_document_url'),
     path('check_language/', CheckLanguage.as_view(), name='check_language'),
     path('create_essay/', create_essay, name='create_essay'),
-    path('speech/', speech, name='speech'),
+    path('speechGeneration/', speechGeneration, name='speechGeneration'),
     path('help/', help_some, name='help')
 
 ]

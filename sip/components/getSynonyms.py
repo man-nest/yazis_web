@@ -1,4 +1,7 @@
 from nltk.corpus import wordnet
+from wiki_ru_wordnet import WikiWordnet
+
+from .checkCyrillic import checkCyrillic
 
 
 plural_of_irregular_nouns = {
@@ -20,18 +23,27 @@ plural_of_irregular_nouns = {
     'formula': 'formulae',
     'genius': 'genii',
 }
-    
+
 
 def getSynonyms(word):
     synonyms = []
-    for synset in wordnet.synsets(word):
-        for lemma in synset.lemmas():
-            if lemma.name() not in synonyms:
-                synonyms.append(lemma.name())
     
+    if checkCyrillic(word):
+        wikiwordnet = WikiWordnet()
+        
+        for synset in wikiwordnet.get_synsets(word):
+            for word in synset.get_words():
+                if word.lemma() not in synonyms:
+                    synonyms.append(word.lemma())
+    else:     
+        for synset in wordnet.synsets(word):
+            for lemma in synset.lemmas():
+                if lemma.name() not in synonyms:
+                    synonyms.append(lemma.name())
+             
     if len(synonyms) == 0:
         synonyms.append(word)
-        
+    
     return synonyms
 
 
@@ -49,13 +61,14 @@ def getSynonymsForList(query_list):
                 key = [k for k, v in plural_of_irregular_nouns.items() if v == synonym][0]
                 if key not in synonyms:
                     synonyms.append(key)
-        
-        synonyms.extend(
-            [synonym + 's' for synonym in synonyms if synonym[-1] != 's' 
-                and synonym not in plural_of_irregular_nouns.keys()
-                and synonym not in plural_of_irregular_nouns.values()
-            ]
-        )
+                    
+        if checkCyrillic(query_list[0]):
+            synonyms.extend(
+                [synonym + 's' for synonym in synonyms if synonym[-1] != 's' 
+                    and synonym not in plural_of_irregular_nouns.keys()
+                    and synonym not in plural_of_irregular_nouns.values()
+                ]
+            )
             
         query_synonyms.append(synonyms)
     

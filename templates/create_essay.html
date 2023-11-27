@@ -4,7 +4,7 @@
     <style type="text/css">
         .text {
             display: block;
-            width: 1200px;
+            width: 60vw;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -41,7 +41,19 @@
                 <label for="formFileMultiple" class="form-label">Choose files</label>
                 <input class="form-control" type="file" id="formFileMultiple" name="File" accept=".txt" multiple>
             </div>
-            <button type="submit" name="Submit" class="btn btn-success">Create</button>
+
+            <div class="btn-group">
+                <button type="submit" name="Submit" class="btn btn-success">Create</button>
+
+                <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                    Speech
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <li><button class="dropdown-item" type="submit" name="StartRecord" value="en-En" type="button">Start English speech</button></li>
+                    <li><button class="dropdown-item" type="submit" name="StartRecord" value="ru-Ru" type="button">Start Russian speech</button></li>
+                </ul>
+            </div>
+            
 
         </form>
 

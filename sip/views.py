@@ -15,6 +15,7 @@ from .components.classes.Analyzer import Analyzer, TextRedactor
 from .components.textFromHTML import text_from_html
 from .components.classes.MetricCalculator import MetricCalculator
 from .components.speechRecognition import speechRecognition
+from .components.speechGenerate import speechGenerate
 
 from .second_lab_content.AlphabetMethod import AlphabetMethod
 from .second_lab_content.GramMethod import GramsMethod
@@ -32,9 +33,50 @@ def main_page(request):
     except LookupError:
         nltk.download('all')
 
-    query = request.GET.get('query')
+    query = ''
+    
+    if "Submit" in request.GET:
+        query = request.GET.get('query')
+        
     method = int(request.GET.get('choice')) if request.GET.get('choice') != None else 1
     
+    if "StartRecord" in request.GET:
+        
+        language = request.GET.get('StartRecord')
+        
+        if language == 'en-En':
+            text = speechRecognition()
+            
+            if 'variant' in text:
+                methodIndex = text.find('variant')
+                findIndex = text.find('find')
+                methodStr = text[methodIndex:findIndex - 1]
+                text = text.replace(methodStr, '')
+
+                method = 1 if methodStr == 'variant one' else 2
+
+            if 'find' in text:
+                text = text.replace('find', '')
+            
+            
+            query = text.replace('stop speech', '')
+        else:
+            text = speechRecognition(language, 'стоп')
+            
+            if 'вариант' in text:
+                methodIndex = text.find('вариант')
+                findIndex = text.find('найди')
+                methodStr = text[methodIndex:findIndex - 1]
+                text = text.replace(methodStr, '')
+
+                method = 1 if methodStr == 'вариант один' else 2
+
+            if 'найди' in text:
+                text = text.replace('найди', '')
+            
+            
+            query = text.replace('стоп', '')
+
     isDocuments = ''
     documents = []
     if not bool(Analyzer.documents):
@@ -262,67 +304,132 @@ def create_essay(request):
     keywords = ''
     document = []
     
+    isKeywords = request.POST.get('keywords')
     method = request.POST.get('choice')
     
     text = ''
     if request.method == 'POST':
-        if "Submit" in request.POST:
             
-            title = ''
-            keywordsOutput = []
-            essayOutput = []
-            if "File" in request.FILES:
-                title = str(request.FILES['File'])
-                slug = (title.split('.', 1)[0].lower()).translate(str.maketrans(' ', '_', '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'))
+        title = ''        
+        keywordsOutput = []
+        essayOutput = []
+        if "File" in request.FILES:
+            title = str(request.FILES['File'])
+            slug = (title.split('.', 1)[0].lower()).translate(str.maketrans(' ', '_', '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'))
 
-                file = request.FILES['File'].read()
-                text = file.decode()
-            else:
-                title = request.POST.get('Title')
-                
-                try:
-                    doc = Document.objects.get(title=title)
-                    text = doc.text
-                except:
-                    error = 'There is no such document'
-
-            essayObj = Essay(text)
-            if method == 'Sentence_extraction':
-                essayOutput = essayObj.get_summary()
-                    
-                for output in essayOutput:
-                    essay += output 
-                        
-            elif method == 'ML':
-                essayOutput = essayObj.ml()
-                    
-                for output in essayOutput:
-                    essay += str(output)
-                
-            if request.POST.get('keywords') == 'Keywords':
-                keywordsOutput = essayObj.keywords()
-
-                for output in keywordsOutput:
-                    keywords += str(output[0])
-
+            file = request.FILES['File'].read()
+            text = file.decode()
+        else:
+            title = request.POST.get('Title')
+            
             try:
-                doc = Document(title=title, slug=slug, text=text, essay=essay, keywords=keywords)
-                doc.save()
-                        
-                doc = Document.objects.get(essay=essay)
-                document.append(doc)
+                doc = Document.objects.get(title=title)
+                text = doc.text
             except:
-                if Document.objects.filter(title=title).exists():
-                    doc = Document.objects.get(title=title)
+                error = 'There is no such document'
+        
+        
+        if "StartRecord" in request.POST:
+            
+            language = request.POST.get('StartRecord')
+            
+            speechText = ''
+            if language == 'en-En':
+                speechText = speechRecognition()
+                
+                if 'variant' in speechText:
+                    methodIndex = speechText.find('variant')
+                    findIndex = speechText.find('key')
+                    methodStr = speechText[methodIndex:findIndex]
+                    speechText = speechText.replace(methodStr, '')
+
+                    method = 'Sentence_extraction' if methodStr == 'variant one' else 'ML'
+
+                if 'key' in speechText:
+                    isKeywords = 'Keywords'
                     
-                    if doc.keywords != None:
-                        Document.objects.filter(title=title).update(essay=essay)
-                    else:
-                        Document.objects.filter(title=title).update(essay=essay, keywords=keywords)
+                    keywordsIndex = speechText.find('key')
+                    titleIndex = speechText.find('title')
+                    keywordsStr = speechText[keywordsIndex:titleIndex]
+                    speechText = speechText.replace(keywordsStr, '')
+                    print(isKeywords)
                     
-                    doc = Document.objects.get(title=title)
-                    document.append(doc)
-                    error = 'Document with that name already exists, but keywords/essay added!'
+                if 'title' in speechText:
+                    speechText = speechText.replace('title ', '')
+                
+                speechText = speechText.replace('stop speech', '')
+
+            else:
+                speechText = speechRecognition(language, 'стоп')
+
+                if 'вариант' in speechText:
+                    methodIndex = speechText.find('вариант')
+                    findIndex = speechText.find('добавь ключевые слова')
+                    methodStr = speechText[methodIndex:findIndex - 1]
+                    speechText = speechText.replace(methodStr, '')
+
+                    method = 'Sentence_extraction' if methodStr == 'вариант один' else 'ML'
+
+                if 'добавь ключевые слова' in speechText:
+                    isKeywords = 'Keywords'
+                    
+                    keywordsIndex = speechText.find('добавь ключевые слова')
+                    titleIndex = speechText.find('название')
+                    keywordsStr = speechText[keywordsIndex:titleIndex]
+                    speechText = speechText.replace(keywordsStr, '')
+
+                
+                if 'название' in speechText:
+                    speechText = speechText.replace('название ', '').replace('названия ', '')
+                
+                speechText = speechText.replace('стоп', '')
+            try:
+                speechText = speechText[:-1] if speechText[-1] == ' ' else speechText
+
+                doc = Document.objects.get(title__contains=speechText)
+
+                title = doc.title
+                text = doc.text
+            except:
+                error = 'Say the phrase more clearly'
+
+        essayObj = Essay(text)
+        if method == 'Sentence_extraction':
+            essayOutput = essayObj.get_summary()
+                
+            for output in essayOutput:
+                essay += output 
+                    
+        elif method == 'ML':
+            essayOutput = essayObj.ml()
+                
+            for output in essayOutput:
+                essay += str(output)
+            
+        if isKeywords == 'Keywords':
+            keywordsOutput = essayObj.keywords()
+
+            for output in keywordsOutput:
+                keywords += str(output[0])
+
+        try:
+            doc = Document(title=title, slug=slug, text=text, essay=essay, keywords=keywords)
+            doc.save()
+                    
+            doc = Document.objects.get(essay=essay)
+            document.append(doc)
+        except:
+            if Document.objects.filter(title=title).exists():
+                doc = Document.objects.get(title=title)
+                
+                if doc.keywords != None and doc.keywords != '':
+                    Document.objects.filter(title=title).update(essay=essay)
+                else:
+                    Document.objects.filter(title=title).update(essay=essay, keywords=keywords)
+                
+                doc = Document.objects.get(title=title)
+                document.append(doc)
+                error = 'Document with that name already exists, but keywords/essay added!'
                     
         if 'Save' in request.POST:
             title = request.POST.get('Save')
@@ -372,16 +479,37 @@ def metrics(request):
     
     return render(request, 'metrics.html', context)
 
-def speech(request):
+def speechGeneration(request):
     
     if request.method == 'POST':
-        if "Record" in request.POST:
-            print('Start recording')
-            speechRecognition()
+        
+        if "Submit" in request.POST:
+            
+            rate = int(request.POST.get('Rate')) if request.POST.get('Rate') != '' else 200
+            volume = float(request.POST.get('Volume')) if request.POST.get('Volume') != '' else 1.0
+            voice = request.POST.get('choice') if request.POST.get('choice') != None else 'IRINA_RU'
+            
+            query = request.POST.get('query')
+            
+            speechGenerate(query, rate, volume, voice)
     
-    return render(request, 'speech.html')
+    return render(request, 'speechGeneration.html')
 
 def help_some(request):
+    
+    if request.method == 'POST':
+        
+        if "Submit" in request.POST:
+            text = ''
+            
+            root_dir = pathlib.Path(__file__).resolve().parent.parent
+            
+            path = str(root_dir) + '\\media\\helpText\\helpText.txt'
+            with open(path, 'r', encoding='utf-8') as file:
+                text = file.read()
+
+            speechGenerate(text, voice = 'IRINA_RU')
+    
     return render(request, 'help.html')
 
 

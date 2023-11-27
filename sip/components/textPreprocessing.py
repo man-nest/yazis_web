@@ -1,5 +1,6 @@
 from nltk.tokenize import word_tokenize
 from spellchecker import SpellChecker
+from .checkCyrillic import checkCyrillic
 
 
 def textPreprocessing(rawText):
@@ -11,7 +12,12 @@ def textPreprocessing(rawText):
     # rawText = [word for word in word_tokenize(rawText) if
     #     not any(char.isdigit() for char in word)]  # remove tokens with numbers
 
-    spell = SpellChecker()  # correct misspelled words
+    spell: SpellChecker
+    if checkCyrillic(rawText[0]):
+        spell = SpellChecker(language='ru')
+    else:
+        spell = SpellChecker()  # correct misspelled words
+    
     rawText = [spell.correction(word) for word in rawText]
 
     return rawText

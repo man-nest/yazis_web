@@ -91,6 +91,8 @@ class Essay:
             parser = PlaintextParser.from_string(self.input, Tokenizer('spanish'))
         elif detect(self.input) == 'en':
             parser = PlaintextParser.from_string(self.input, Tokenizer('english'))
+        elif detect(self.input) == 'ru':
+            parser = PlaintextParser.from_string(self.input, Tokenizer('russian'))
 
         summarizer_1 = LuhnSummarizer()
         summary_1 = summarizer_1(parser.document, 10)
