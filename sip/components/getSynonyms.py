@@ -43,7 +43,7 @@ def getSynonyms(word):
              
     if len(synonyms) == 0:
         synonyms.append(word)
-    
+
     return synonyms
 
 
@@ -61,8 +61,8 @@ def getSynonymsForList(query_list):
                 key = [k for k, v in plural_of_irregular_nouns.items() if v == synonym][0]
                 if key not in synonyms:
                     synonyms.append(key)
-                    
-        if checkCyrillic(query_list[0]):
+
+        if not checkCyrillic(query_list[0]):
             synonyms.extend(
                 [synonym + 's' for synonym in synonyms if synonym[-1] != 's' 
                     and synonym not in plural_of_irregular_nouns.keys()
@@ -71,5 +71,5 @@ def getSynonymsForList(query_list):
             )
             
         query_synonyms.append(synonyms)
-    
+
     return query_synonyms

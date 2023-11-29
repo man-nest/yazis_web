@@ -18,6 +18,7 @@ def textPreprocessing(rawText):
     else:
         spell = SpellChecker()  # correct misspelled words
     
-    rawText = [spell.correction(word) for word in rawText]
+
+    rawText = [spell.correction(word) if spell.correction(word) is not None else word for word in rawText]
 
     return rawText

@@ -27,7 +27,6 @@ class Analyzer:
         query_two=TextRedactor.filter(TextRedactor.clean_text(query))
         _, query = Analyzer.calculate_query_vector(query)
         
-
         query = textPreprocessing(query)
 
         query_synonyms = getSynonymsForList(query)

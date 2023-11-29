@@ -11,6 +11,12 @@
         }
     </style>
 
+    <script type="text/javascript">
+        function handleSpeech() {
+            document.getElementById("speechText").style.visibility = "visible";
+        }
+    </script>
+
     <div class="content">
         <form action="{% url 'create_essay' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
@@ -42,6 +48,8 @@
                 <input class="form-control" type="file" id="formFileMultiple" name="File" accept=".txt" multiple>
             </div>
 
+            <div style='visibility: hidden;' id='speechText'>Start recording...</div>
+
             <div class="btn-group">
                 <button type="submit" name="Submit" class="btn btn-success">Create</button>
 
@@ -49,8 +57,29 @@
                     Speech
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                    <li><button class="dropdown-item" type="submit" name="StartRecord" value="en-En" type="button">Start English speech</button></li>
-                    <li><button class="dropdown-item" type="submit" name="StartRecord" value="ru-Ru" type="button">Start Russian speech</button></li>
+                    <li>
+                        <button
+                            class="dropdown-item"
+                            type="submit"
+                            name="StartRecord"
+                            value="en-En"
+                            type="button"
+                        >
+                            Start English speech
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            class="dropdown-item"
+                            type="submit"
+                            name="StartRecord"
+                            value="ru-Ru"
+                            type="button"
+                            onClick="handleSpeech()"
+                        >
+                            Start Russian speech
+                        </button>
+                    </li>
                 </ul>
             </div>
             

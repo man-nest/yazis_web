@@ -62,7 +62,7 @@ def main_page(request):
             query = text.replace('stop speech', '')
         else:
             text = speechRecognition(language, 'стоп')
-            
+
             if 'вариант' in text:
                 methodIndex = text.find('вариант')
                 findIndex = text.find('найди')

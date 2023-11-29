@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+    <script type="text/javascript">
+        function handleSpeech() {
+            document.getElementById("speechText").style.visibility = "visible";
+        }
+    </script>
+
     <div class="container">
         <h1>Documents search</h1>
 
@@ -17,18 +24,47 @@
                 </div>
             </div>
 
+            <div style='visibility: hidden;' id='speechText'>Start recording...</div>
 
             <div class="input-group mb-3">
                 <input type="text" class="form-control" placeholder="Search..." name="query">
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="submit" name="Submit">Search</button>
 
-                    <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button
+                        class="btn btn-warning dropdown-toggle"
+                        type="button"
+                        id="dropdownMenu2"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
                         Speech
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                        <li><button class="dropdown-item" type="submit" name="StartRecord" value="en-En" type="button">Start English speech</button></li>
-                        <li><button class="dropdown-item" type="submit" name="StartRecord" value="ru-Ru" type="button">Start Russian speech</button></li>
+                        <li>
+                            <button
+                                class="dropdown-item"
+                                type="submit"
+                                name="StartRecord"
+                                value="en-En"
+                                type="button"
+                                onClick="handleSpeech()"
+                            >
+                                Start English speech
+                            </button>
+                        </li>
+                        <li>
+                            <button
+                                class="dropdown-item"
+                                type="submit"
+                                name="StartRecord"
+                                value="ru-Ru"
+                                type="button"
+                                onClick="handleSpeech()"
+                            >
+                                Start Russian speech
+                            </button>
+                        </li>
                     </ul>
                 </div>
             </div>   
