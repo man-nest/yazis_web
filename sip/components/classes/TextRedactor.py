@@ -46,7 +46,9 @@ class TextRedactor:
         current_path = str(Path(__file__).resolve().parent.parent).replace('sip', 'media\\').replace('components', '')
         current_path += 'essay\\'
         
+        title = title.translate(str.maketrans('', '', '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'))
+                
         current_path = current_path + title + '.txt'
-        print(current_path)
+
         with open(current_path, "w", encoding='UTF-8') as document:
             document.write(text)

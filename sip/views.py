@@ -46,7 +46,7 @@ def main_page(request):
         
         if language == 'en-En':
             text = speechRecognition()
-            
+
             if 'variant' in text:
                 methodIndex = text.find('variant')
                 findIndex = text.find('find')
@@ -82,24 +82,27 @@ def main_page(request):
     if not bool(Analyzer.documents):
         docs = Document.objects.all()
         Analyzer.some_init(docs)
+    
+    try:
+        if query:
+            docs_title, terms = Analyzer.analyze(query, method)
+            number = 0
+            
+            if len(docs_title) > 0:
+                for one in docs_title:
+                    obj = Document.objects.filter(title=one).first()
+                    if method == 1:
+                        obj.terms = terms
+                        documents.append(obj)
+                    else:
+                        terms[number][-1] = 'Общая оценка релевантности: ' + str(terms[number][-1])
+                        obj.terms = terms[number]
+                                        
+                        documents.append(obj)
 
-    if query:
-        docs_title, terms = Analyzer.analyze(query, method)
-        number = 0
-        
-        if len(docs_title) > 0:
-            for one in docs_title:
-                obj = Document.objects.filter(title=one).first()
-                if method == 1:
-                    obj.terms = terms
-                    documents.append(obj)
-                else:
-                    terms[number][-1] = 'Общая оценка релевантности: ' + str(terms[number][-1])
-                    obj.terms = terms[number]
-                                       
-                    documents.append(obj)
-
-                    number += 1
+                        number += 1
+    except:
+        isDocuments = 'Say the phrase more clearly'
 
 
         isDocuments = '' if bool(documents) else 'No search results'
@@ -352,12 +355,11 @@ def create_essay(request):
                     titleIndex = speechText.find('title')
                     keywordsStr = speechText[keywordsIndex:titleIndex]
                     speechText = speechText.replace(keywordsStr, '')
-                    print(isKeywords)
                     
                 if 'title' in speechText:
                     speechText = speechText.replace('title ', '')
                 
-                speechText = speechText.replace('stop speech', '')
+                speechText = speechText.replace('stop speech', '').replace(' ', '')
 
             else:
                 speechText = speechRecognition(language, 'стоп')
@@ -382,7 +384,7 @@ def create_essay(request):
                 if 'название' in speechText:
                     speechText = speechText.replace('название ', '').replace('названия ', '')
                 
-                speechText = speechText.replace('стоп', '')
+                speechText = speechText.replace('стоп', '').replace(' ', '')
             try:
                 speechText = speechText[:-1] if speechText[-1] == ' ' else speechText
 
@@ -392,25 +394,28 @@ def create_essay(request):
                 text = doc.text
             except:
                 error = 'Say the phrase more clearly'
-
-        essayObj = Essay(text)
-        if method == 'Sentence_extraction':
-            essayOutput = essayObj.get_summary()
-                
-            for output in essayOutput:
-                essay += output 
+        
+        try:
+            essayObj = Essay(text)
+            if method == 'Sentence_extraction':
+                essayOutput = essayObj.get_summary()
                     
-        elif method == 'ML':
-            essayOutput = essayObj.ml()
+                for output in essayOutput:
+                    essay += output 
+                        
+            elif method == 'ML':
+                essayOutput = essayObj.ml()
+                    
+                for output in essayOutput:
+                    essay += str(output)
                 
-            for output in essayOutput:
-                essay += str(output)
-            
-        if isKeywords == 'Keywords':
-            keywordsOutput = essayObj.keywords()
+            if isKeywords == 'Keywords':
+                keywordsOutput = essayObj.keywords()
 
-            for output in keywordsOutput:
-                keywords += str(output[0])
+                for output in keywordsOutput:
+                    keywords += str(output[0])
+        except:
+            error = 'Say the phrase more clearly'
 
         try:
             doc = Document(title=title, slug=slug, text=text, essay=essay, keywords=keywords)
